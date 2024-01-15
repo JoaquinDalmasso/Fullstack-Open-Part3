@@ -43,10 +43,7 @@ let persons = [
       "id": 5
     }
   ]
-  
-  app.get('/', (req, res) => {
-    res.send('<h1>Hello World!</h1>')
-  })
+
 
   app.get('/info', (req, res) => {
     const date = new Date()
