@@ -4,6 +4,7 @@ const morgan = require('morgan')
 const cors = require('cors')
 const mongoose = require('mongoose')
 
+const password = process.argv[2]
 const url = 
     `mongodb+srv://fullstack:${password}@fullstackopen.j10dt.mongodb.net/persons-app?retryWrites=true&w=majority`
 
