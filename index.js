@@ -2,7 +2,20 @@ const express = require('express')
 const app = express()
 const morgan = require('morgan')
 const cors = require('cors')
+const mongoose = require('mongoose')
 
+const url = 
+    `mongodb+srv://fullstack:${password}@fullstackopen.j10dt.mongodb.net/persons-app?retryWrites=true&w=majority`
+
+mongoose.connect(url)
+
+const peopleSchema = new mongoose.Schema({
+  name: String,
+  number: String,
+  date: Date,
+})
+
+const Person = mongoose.model('Person', peopleSchema)
 
 morgan.token('postData', (req, res) => {
   if (req.method === 'POST') {
@@ -64,7 +77,9 @@ let persons = [
   })
 
   app.get('/api/persons', (req, res) => {
+    Person.find({}).then(persons => {
     res.json(persons)
+    })
   })
   
   const generateId = () => {
