@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 
 mongoose.set('strictQuery', false)
 
-const url = process.env.MONGODB_URI
+const url = "mongodb+srv://fullstack:123@fullstackopen.j10dt.mongodb.net/persons-app?retryWrites=true&w=majority"
 
 console.log('connecting to', url)
 
