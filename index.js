@@ -2,21 +2,8 @@ const express = require('express')
 const app = express()
 const morgan = require('morgan')
 const cors = require('cors')
-const mongoose = require('mongoose')
-
-const password = process.argv[2]
-const url = 
-    `mongodb+srv://fullstack:123@fullstackopen.j10dt.mongodb.net/persons-app?retryWrites=true&w=majority`
-
-mongoose.connect(url)
-
-const peopleSchema = new mongoose.Schema({
-  name: String,
-  number: String,
-  date: Date,
-})
-
-const Person = mongoose.model('Person', peopleSchema)
+require('dotenv').config()
+const Person = require('./models/person')
 
 morgan.token('postData', (req, res) => {
   if (req.method === 'POST') {
@@ -30,34 +17,7 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms :p
 app.use(express.json())
 app.use(cors())
 
-let persons = [
-    {
-      "name": "Arto Hellas",
-      "number": "040-123456",
-      "id": 1
-    },
-    {
-      "name": "Ada Lovelace",
-      "number": "39-44-5323523",
-      "id": 2
-    },
-    {
-      "name": "Dan Abramov",
-      "number": "12-43-234345",
-      "id": 3
-    },
-    {
-      "name": "Mary Poppendieck",
-      "number": "39-23-6423122",
-      "id": 4
-    },
-    {
-      "name": "Jack Sparrow",
-      "number": "12345",
-      "id": 5
-    }
-  ]
-
+let persons = []
 
   app.get('/info', (req, res) => {
     const date = new Date()
@@ -99,27 +59,30 @@ let persons = [
       })
     }
   
-    const person = {
+    const person = new Person({
       name: body.name,
       number: body.number,
       id: generateId(),
-    }
-  
-    persons = persons.concat(person)
-  
-    response.json(person)
+    })
+
+    person.save().then(savedPerson => {
+      response.json(savedPerson)
+    })
   })
   
   app.get('/api/persons/:id', (request, response) => {
-    const id = Number(request.params.id)
-    const person = persons.find(person => person.id === id)
-  
+    Person.findById(request.params.id)
+    .then(person => {
     if (person) {
       response.json(person)
     } else {
       response.status(404).end()
     }
-  
+  })
+    .catch(error => {
+      console.log(error)
+      response.status(400).send({ error: 'malformatted id' })
+    })
   })
   
   app.delete('/api/persons/:id', (request, response) => {
@@ -129,7 +92,7 @@ let persons = [
     response.status(204).end()
   })
   
-  const PORT = process.env.PORT || 3001;
+  const PORT = process.env.PORT
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
   })
