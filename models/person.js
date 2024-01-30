@@ -15,8 +15,17 @@ mongoose.connect(url)
   })
 
   const peopleSchema = new mongoose.Schema({
-    name: String,
-    number: String,
+    name: {
+      type: String,
+      required: true,
+      minlength: [3,'The name is shorter than the minimum allowed length (3)'],
+      unique: true
+    },
+    number: {
+    type: String,
+    minlength: [8,'The number is shorter than the minimum allowed length (8)'],
+    required: true,
+  },
     date: Date,
   })
 
